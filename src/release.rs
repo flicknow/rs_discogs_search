@@ -4,86 +4,86 @@ use serde::{Deserialize, Serialize};
 #[serde(default)]
 pub struct Release {
     #[serde(rename = "@id")]
-    id: i64,
+    pub id: i64,
     #[serde(rename = "@status")]
-    status: String,
-    title: String,
-    country: String,
-    released: String,
-    labels: Labels,
-    artists: Artists,
-    extraartists: Artists,
-    genres: Genres,
-    styles: Styles,
-    master_id: MasterId,
-    tracklist: TrackList,
-    data_quality: String,
+    pub status: String,
+    pub title: String,
+    pub country: String,
+    pub released: String,
+    pub labels: Labels,
+    pub artists: Artists,
+    pub extraartists: Artists,
+    pub genres: Genres,
+    pub styles: Styles,
+    pub master_id: MasterId,
+    pub tracklist: TrackList,
+    pub data_quality: String,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Artists {
-    artist: Vec<Artist>,
+    pub artist: Vec<Artist>,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Artist {
-    id: i64,
-    name: String,
-    anv: String,
-    role: String,
-    tracks: String,
+    pub id: i64,
+    pub name: String,
+    pub anv: String,
+    pub role: String,
+    pub tracks: String,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Labels {
-    label: Vec<Label>,
+    pub label: Vec<Label>,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Label {
     #[serde(rename = "@id")]
-    id: i64,
+    pub id: i64,
     #[serde(rename = "@name")]
-    name: String,
+    pub name: String,
     #[serde(rename = "@catno")]
-    catno: String,
+    pub catno: String,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Genres {
-    genre: Vec<String>,
+    pub genre: Vec<String>,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Styles {
-    style: Vec<String>,
+    pub style: Vec<String>,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct MasterId {
     #[serde(rename = "@is_main_release")]
-    is_main_release: String,
+    pub is_main_release: String,
     #[serde(rename = "$text")]
-    id: i64,
+    pub id: i64,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct TrackList {
-    track: Vec<Track>,
+    pub track: Vec<Track>,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Track {
-    position: String,
-    title: String,
-    duration: String,
+    pub position: String,
+    pub title: String,
+    pub duration: String,
 }

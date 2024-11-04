@@ -4,39 +4,39 @@ use serde::{Deserialize, Serialize};
 #[serde(default)]
 pub struct Master {
     #[serde(rename = "@id")]
-    id: i64,
-    artists: Artists,
-    genres: Genres,
-    styles: Styles,
-    year: i64,
-    title: String,
-    data_quality: String,
+    pub id: i64,
+    pub artists: Artists,
+    pub genres: Genres,
+    pub styles: Styles,
+    pub year: i64,
+    pub title: String,
+    pub data_quality: String,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Artists {
-    artist: Vec<Artist>,
+    pub artist: Vec<Artist>,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Artist {
-    id: i64,
-    name: String,
-    anv: String,
-    role: String,
-    tracks: String,
+    pub id: i64,
+    pub name: String,
+    pub anv: String,
+    pub role: String,
+    pub tracks: String,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Genres {
-    genre: Vec<String>,
+    pub genre: Vec<String>,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Styles {
-    style: Vec<String>,
+    pub style: Vec<String>,
 }
