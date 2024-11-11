@@ -69,7 +69,7 @@ pub struct Styles {
 #[serde(default)]
 pub struct MasterId {
     #[serde(rename = "@is_main_release")]
-    pub is_main_release: String,
+    pub is_main_release: bool,
     #[serde(rename = "$text")]
     pub id: i64,
 }
