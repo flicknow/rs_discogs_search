@@ -1,13 +1,8 @@
-use rs_discogs_search::artist::Artist;
-use rs_discogs_search::label::Label;
-use rs_discogs_search::master::Master;
-use rs_discogs_search::release::Release;
+use rs_discogs_search::doc;
+use rs_discogs_search::indexer::Indexer;
 use rs_discogs_search::stream::Stream;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
 use serde_json::ser::to_string;
 use std::env;
-use std::fmt::Debug;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 fn now() -> u128 {
@@ -17,13 +12,61 @@ fn now() -> u128 {
         .as_millis();
 }
 
-fn count_xml<T: DeserializeOwned + Serialize + Debug>(mut stream: Stream) {
+async fn index_xml<T: 'static + doc::Doc>(mut stream: Stream<T>) {
+    let indexer: Indexer<T> = Indexer::new(String::from("http://localhost:9200"));
+    while let Some(doc) = stream.next().await {
+        indexer.index(doc).await;
+    }
+}
+
+async fn index_releases(mut stream: Stream<doc::release::Release>) {
+    let indexer = Indexer::new(String::from("http://localhost:9200"));
+    while let Some(release) = stream.next().await {
+        let mut is_jazz = false;
+        for genre in &release.genres.genre {
+            if genre == "Jazz" {
+                is_jazz = true;
+                break;
+            }
+        }
+        if !is_jazz {
+            continue;
+        };
+
+        let master_id = &release.master_id;
+        if (master_id.id > 0) && (!master_id.is_main_release) {
+            continue;
+        }
+
+        indexer.index(release).await;
+    }
+}
+
+async fn index_masters(mut stream: Stream<doc::master::Master>) {
+    let indexer = Indexer::new(String::from("http://localhost:9200"));
+    while let Some(master) = stream.next().await {
+        let mut is_jazz = false;
+        for genre in &master.genres.genre {
+            if genre == "Jazz" {
+                is_jazz = true;
+                break;
+            }
+        }
+        if !is_jazz {
+            continue;
+        };
+
+        indexer.index(master).await;
+    }
+}
+
+async fn count_xml<T: 'static + doc::Doc>(mut stream: Stream<T>) {
     let mut last = now();
     let step = 10000;
     let mut count = 0;
 
     let mut seen: Option<T> = None;
-    while let Some(item) = stream.next::<T>() {
+    while let Some(item) = stream.next().await {
         count += 1;
 
         if (count % step) == 0 {
@@ -45,7 +88,8 @@ fn count_xml<T: DeserializeOwned + Serialize + Debug>(mut stream: Stream) {
     println!("> last saw {}", to_string(&seen).unwrap());
 }
 
-fn main() -> Result<(), quick_xml::Error> {
+#[tokio::main]
+async fn main() -> Result<(), quick_xml::Error> {
     let args: Vec<String> = env::args().collect();
     let dump_type = match args.get(1) {
         Some(dump_type) => match dump_type.as_str() {
@@ -60,13 +104,14 @@ fn main() -> Result<(), quick_xml::Error> {
         "https://discogs-data-dumps.s3-us-west-2.amazonaws.com/data/2024/discogs_{}_{}.xml.gz",
         dump_date, dump_type
     );
+
     match dump_type.as_str() {
-        "artists" => count_xml::<Artist>(Stream::new(&url)),
-        "labels" => count_xml::<Label>(Stream::new(&url)),
-        "masters" => count_xml::<Master>(Stream::new(&url)),
-        "releases" => count_xml::<Release>(Stream::new(&url)),
+        "masters" => index_masters(Stream::new(url)).await,
+        "releases" => index_releases(Stream::new(url)).await,
+        //"artists" => count_xml::<doc::artist::Artist>(Stream::new(url)).await,
+        //"labels" => count_xml::<doc::label::Label>(Stream::new(url)).await,
         _ => (),
     };
 
-    Ok(())
+    return Ok(());
 }

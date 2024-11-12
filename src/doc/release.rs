@@ -1,10 +1,11 @@
+use super::Doc;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Release {
     #[serde(rename = "@id")]
-    pub id: i64,
+    pub id: String,
     #[serde(rename = "@status")]
     pub status: String,
     pub title: String,
@@ -18,6 +19,12 @@ pub struct Release {
     pub master_id: MasterId,
     pub tracklist: TrackList,
     pub data_quality: String,
+}
+
+impl Doc for Release {
+    fn index_id(&self) -> opensearch::IndexParts {
+        return opensearch::IndexParts::IndexId("release", self.id.as_str());
+    }
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]

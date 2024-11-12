@@ -1,5 +1,3 @@
-pub mod artist;
-pub mod label;
-pub mod master;
-pub mod release;
+pub mod doc;
+pub mod indexer;
 pub mod stream;

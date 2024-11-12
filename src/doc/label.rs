@@ -1,35 +1,34 @@
+use super::Doc;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
-pub struct Artist {
-    pub id: i64,
+pub struct Label {
+    pub id: String,
     pub name: String,
-    pub realname: String,
     pub profile: String,
-    pub namevariations: NameVariations,
-    pub aliases: Aliases,
+    pub sublabels: SubLabels,
     pub data_quality: String,
 }
 
-#[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
-#[serde(default)]
-pub struct NameVariations {
-    pub name: Vec<String>,
+impl Doc for Label {
+    fn index_id(&self) -> opensearch::IndexParts {
+        return opensearch::IndexParts::IndexId("label", self.id.as_str());
+    }
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
-pub struct Aliases {
-    #[serde(rename = "name")]
-    pub alias: Vec<Alias>,
+pub struct SubLabels {
+    #[serde(rename = "label")]
+    pub sublabel: Vec<SubLabel>,
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
 #[serde(default)]
-pub struct Alias {
+pub struct SubLabel {
     #[serde(rename = "@id")]
     pub id: i64,
     #[serde(rename = "$text")]
-    pub name: String,
+    pub label: String,
 }
