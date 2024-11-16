@@ -42,12 +42,21 @@ impl IndexerWorker {
         return Self { client };
     }
     pub async fn index<T: Doc>(&self, doc: &T) {
-        self.client
+        let res = self
+            .client
             .index(doc.index_id())
             .body(doc)
             .send()
             .await
             .unwrap();
+
+        let status_code = &res.status_code();
+        if !status_code.is_success() {
+            let status_code = status_code.as_u16();
+            let headers = format!("{:?}", res.headers());
+            let text = res.text().await.unwrap();
+            panic!("{} {} {}", status_code, headers, text);
+        }
         return ();
     }
 }

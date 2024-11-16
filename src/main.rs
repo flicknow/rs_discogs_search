@@ -24,7 +24,7 @@ async fn index_releases(mut stream: Stream<doc::release::Release>) {
     while let Some(release) = stream.next().await {
         let mut is_jazz = false;
         for genre in &release.genres.genre {
-            if genre == "Jazz" {
+            if genre.eq_ignore_ascii_case("jazz") {
                 is_jazz = true;
                 break;
             }
@@ -47,7 +47,7 @@ async fn index_masters(mut stream: Stream<doc::master::Master>) {
     while let Some(master) = stream.next().await {
         let mut is_jazz = false;
         for genre in &master.genres.genre {
-            if genre == "Jazz" {
+            if genre.eq_ignore_ascii_case("jazz") {
                 is_jazz = true;
                 break;
             }
